@@ -1,0 +1,33 @@
+
+version: '3.8'
+
+services:
+  xcat:
+    image: cdac_xcat:2.16.5
+    environment:
+      - DHCPINTERFACE=${DHCPINTERFACE}
+      - DOMAIN=${DOMAIN}
+      - MASTER=${MASTER}
+      - NAMESERVERS=${NAMESERVERS}
+      - FORWARDERS=${FORWARDERS}
+      - MYSQL_PORT=${MYSQL_PORT}             # Add MySQL port variable
+      - MYSQLADMIN_PW=${MYSQLADMIN_PW}       # Add MySQL admin password variable
+      - MYSQLROOT_PW=${MYSQLROOT_PW}         # Add MySQL root password variable
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /drbd/xcatdata:/xcatdata       # Bind the DRBD mount point to /xcatdata in the container
+      - /drbd/var_log_xcat:/var/log/xcat
+      - /drbd/xcat_mysqldata:/var/lib/mysql
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.labels.xcat_master == true
+    networks:
+      - host
+
+networks:
+  host:
+    external: true
