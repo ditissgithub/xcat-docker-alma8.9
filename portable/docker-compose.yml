@@ -5,6 +5,7 @@ services:
   xcat:
     image: cdac_xcat:2.16.5
     environment:
+      - TIMEZONE=${TIMEZONE}
       - DHCPINTERFACE=${DHCPINTERFACE}
       - DOMAIN=${DOMAIN}
       - MASTER=${MASTER}
